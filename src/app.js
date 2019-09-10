@@ -8,7 +8,7 @@ import fundRouter from './routes/fund.routes';
 const app = express();
 
 app.use(express.json());
-app.use(fundRouter);
+app.use('/api/funds', fundRouter);
 // app.use(stockRouter);
 
 export default app;

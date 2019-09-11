@@ -8,12 +8,8 @@ const list = (req, res) => {
 };
 
 const create = (req, res) => {
-	const { ticker, name } = req.body;
 	Fund
-		.create({
-			ticker,
-			name
-		})
+		.create({ ...req.body })
 		.then(fund => res.status(201).json(fund))
 		.catch(err => res.status(400).json(err));
 };

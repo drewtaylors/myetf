@@ -1,36 +1,36 @@
-import request from 'supertest'
+import request from 'supertest';
 
 import app from '../src/app';
 import Fund from '../src/models/fund.model';
 import {
 	fundOne,
 	setupDatabase
-} from './fixtures/db'
+} from './fixtures/db';
 
-beforeEach(setupDatabase)
+beforeEach(() => {
+	return setupDatabase();
+});
+
+// Constants used throughout tests
+const newFund = {
+	ticker: 'SPY',
+	name: 'SPDR S&P 500 ETF'
+}
+const invalidTicker = 'INVALIDTICKER'
 
 test('should add a new fund', () => {
 	return request(app)
 		.post('/api/funds')
-		.send({
-			ticker: 'SPY',
-			name: 'SPDR S&P 500 ETF'
-		})
+		.send(newFund)
 		.expect(201);
 });
 
 test('should add the correct fund', () => {
 	return request(app)
 		.post('/api/funds')
-		.send({
-			ticker: 'SPY',
-			name: 'SPDR S&P 500 ETF'
-		})
+		.send(newFund)
 		.then(res => Fund.findById(res.body._id))
-		.then(fund => expect(fund).toMatchObject({
-			ticker: 'SPY',
-			name: 'SPDR S&P 500 ETF'
-		}));
+		.then(fund => expect(fund).toMatchObject(newFund));
 });
 
 test('should throw error when attempting to add existing fund', () => {
@@ -53,6 +53,7 @@ test('should fetch all funds', () => {
 test('should fetch fund by ticker', () => {
 	return request(app)
 		.get(`/api/funds/${fundOne.ticker}`)
+		.send()
 		.then(res => expect(res.body).toMatchObject({
 			ticker: fundOne.ticker,
 			name: fundOne.name
@@ -60,7 +61,6 @@ test('should fetch fund by ticker', () => {
 });
 
 test('should throw error when nonexistent fund', () => {
-	const invalidTicker = 'INVALIDTICKER';
 	return request(app)
 		.get(`/api/funds/${invalidTicker}`)
 		.send()
@@ -68,11 +68,6 @@ test('should throw error when nonexistent fund', () => {
 });
 
 test('should update fund', () => {
-	const newFund = {
-		ticker: 'SPY',
-		name: 'SPDR S&P 500 ETF'
-	};
-
 	return request(app)
 		.patch(`/api/funds/${fundOne.ticker}`)
 		.send(newFund)
@@ -81,16 +76,10 @@ test('should update fund', () => {
 });
 
 test('should not update anything if nonexistent fund', () => {
-	const invalidTicker = 'INVALIDTICKER';
-	const newFund = {
-		ticker: 'SPY',
-		name: 'SPDR S&P 500 ETF'
-	};
-
 	return request(app)
 		.patch(`/api/funds/${invalidTicker}`)
 		.send(newFund)
-		.expect(404)
+		.expect(404);
 });
 
 test('should remove fund', () => {
@@ -98,14 +87,12 @@ test('should remove fund', () => {
 		.delete(`/api/funds/${fundOne.ticker}`)
 		.send()
 		.then(res => Fund.findOne({ ticker: res.body.ticker }))
-		.then(fund => expect(fund).toBeFalsy());
+		.then(fund => expect(fund).toBeNull());
 });
 
 test('should not remove anything if nonexistent fund', () => {
-	const invalidTicker = 'INVALIDTICKER';
-
 	return request(app)
 		.delete(`/api/funds/${invalidTicker}`)
 		.send()
-		.expect(404)
+		.expect(404);
 });

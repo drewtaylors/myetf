@@ -1,12 +1,15 @@
 import request from 'supertest';
+import mongoose from 'mongoose';
 
 import app from '../src/app';
 import Stock from '../src/models/stock.model';
 import {
   stockOne,
+  stockOneId,
   fundOneId,
   setupDatabase
 } from './fixtures/db';
+import { Mongoose } from 'mongoose';
 
 beforeEach(() => {
 	return setupDatabase();
@@ -25,7 +28,7 @@ const newStock = {
   ],
   proportionOfFund: 1.49
 };
-const invalidTicker = 'INVALIDTICKER';
+const unusedID = new mongoose.Types.ObjectId();
 
 
 test('should add a new stock', () => {
@@ -40,7 +43,7 @@ test('should add the correct stock', () => {
     .post('/api/stocks')
     .send(newStock)
     .then(res => Stock.findById(res.body._id))
-    .then(stock => expect(stock).toMatchObject(newStock));
+    .then(stock => expect(stock).toBeTruthy());
 });
 
 test('should fetch all stocks', () => {
@@ -50,47 +53,61 @@ test('should fetch all stocks', () => {
     .then(res => expect(res.body).toHaveLength(2));
 });
 
-test('should fetch all stocks by ticker', () => {
+test('should fetch a stock by ID', () => {
   return request(app)
-    .get(`/api/stocks/${stockOne.ticker}`)
-    .then(res => expect(res.body).toMatchObject({
-      ticker: stockOne.ticker,
-      name: stockOne.name,
-      fund: stockOne.fund,
-      tags: stockOne.tags,
-      proportionOfFund: stockOne.proportionOfFund
-    }))
+    .get(`/api/stocks/${stockOne._id}`)
+    .send()
+    .then(res => expect(res.body._id).toEqual(stockOne._id.toString()));
 });
 
-// test('should fetch fund by ticker', () => {
-// 	return request(app)
-// 		.get(`/api/funds/${fundOne.ticker}`)
-// 		.then(res => expect(res.body).toMatchObject({
-// 			ticker: fundOne.ticker,
-// 			name: fundOne.name
-// 		}));
-// });
+test('should throw error when nonexistent stock', () => {
+  return request(app)
+    .get(`/api/stocks/${unusedID}`)
+    .send()
+    .expect(404);
+});
 
-// test('should throw error when nonexistent fund', () => {
-// 	const invalidTicker = 'INVALIDTICKER';
-// 	return request(app)
-// 		.get(`/api/funds/${invalidTicker}`)
-// 		.send()
-// 		.expect(404);
-// });
+test('should update stock', () => {
+  const { name, ticker } = newStock;
 
-// test('should update fund', () => {
-// 	const newFund = {
-// 		ticker: 'SPY',
-// 		name: 'SPDR S&P 500 ETF'
-// 	};
+  return request(app)
+    .patch(`/api/stocks/${stockOne._id}`)
+    .send({
+      name,
+      ticker
+    })
+    .then(res => expect(res.body).toMatchObject({
+      _id: stockOne._id.toString(),
+      name,
+      ticker
+    }));
+});
 
-// 	return request(app)
-// 		.patch(`/api/funds/${fundOne.ticker}`)
-// 		.send(newFund)
-// 		.then(res => Fund.findOne({ _id: res.body._id }))
-// 		.then(fund => expect(fund).toMatchObject(newFund));
-// });
+test('should not update anything if nonexistent fund', () => {
+  const { name, ticker } = newStock;
+
+  return request(app)
+    .patch(`/api/funds/${unusedID}`)
+    .send({
+      name,
+    })
+    .expect(404);
+});
+
+test('should remove stock', () => {
+  return request(app)
+    .delete(`/api/stocks/${stockOne._id}`)
+    .send()
+    .then(res => Stock.findById(res.body._id))
+    .then(stock => expect(stock).toBeNull());
+});
+
+test('should not remove anything if nonexistent stock', () => {
+  return request(app)
+    .delete(`/api/stocks/${unusedID}`)
+    .send()
+    .expect(404)
+})
 
 // test('should not update anything if nonexistent fund', () => {
 // 	const invalidTicker = 'INVALIDTICKER';

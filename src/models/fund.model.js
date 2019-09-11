@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 const fundSchema = new mongoose.Schema({
 	ticker: {
 		type: String,
-		unique: true
+		unique: true,
+		required: true
 	},
 	name: {
 		type: String,

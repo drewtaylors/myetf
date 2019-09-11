@@ -1,5 +1,4 @@
 import Stock from '../models/stock.model';
-import Fund from '../models/fund.model';
 
 const list = (req, res) => {
 	Stock
@@ -17,10 +16,33 @@ const create = (req, res) => {
 
 const detail = (req, res) => {
 	Stock
-		.findOne({ ticker: req.params.ticker })
+		.findById(req.params.id)
+		.then(stock => stock ? res.json(stock) : res.status(404).send())
+}
+
+const update = (req, res) => {
+	Stock
+		.findByIdAndUpdate(req.params.id, {
+			...req.body
+		}, {
+			new: true,
+			omitUndefined: true
+		})
+		.then(stock => stock ? res.send(stock) : res.status(404).send())
+		.catch(err => res.status(500).send(err));
+}
+
+const remove = (req, res) => {
+	Stock
+		.findByIdAndDelete(req.params.id)
+		.then(stock => stock ? res.send(stock) : res.status(404).send())
+		.catch(err => res.status(500).send(err));
 }
 
 export {
   list,
-  create,
+	create,
+	detail,
+	update,
+	remove
 }

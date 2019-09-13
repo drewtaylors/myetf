@@ -12,8 +12,8 @@ const router = Router();
 
 router.get('/', list);
 router.post('/', create);
-router.get('/:id', detail)
-router.patch('/:id', update)
-router.delete('/:id', remove)
+router.get('/:ticker', detail)
+router.patch('/:ticker', update)
+router.delete('/:ticker', remove)
 
 export default router;

@@ -42,4 +42,10 @@ const remove = (req, res) => {
 		.catch(err => res.status(500).send(err));
 }
 
-export { list, create, detail, update, remove };
+export {
+	list,
+	create,
+	detail,
+	update,
+	remove
+};

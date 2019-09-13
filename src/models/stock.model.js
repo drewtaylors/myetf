@@ -7,15 +7,8 @@ const stockSchema = new mongoose.Schema({
     name: {
         type: String,
     },
-    fund: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Fund'
-    },
     tags: {
-        type: [String]
-    },
-    proportionOfFund: {
-        type: Number
+        type: [ String ]
     }
 }, {
     timestamps: true

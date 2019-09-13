@@ -16,13 +16,15 @@ const create = (req, res) => {
 
 const detail = (req, res) => {
 	Stock
-		.findById(req.params.id)
+		.findOne({ ticker: req.params.ticker })
 		.then(stock => stock ? res.json(stock) : res.status(404).send())
 }
 
 const update = (req, res) => {
 	Stock
-		.findByIdAndUpdate(req.params.id, {
+		.findOneAndUpdate({
+			ticker: req.params.ticker
+		}, {
 			...req.body
 		}, {
 			new: true,
@@ -34,7 +36,7 @@ const update = (req, res) => {
 
 const remove = (req, res) => {
 	Stock
-		.findByIdAndDelete(req.params.id)
+		.findOneAndDelete({ ticker: req.params.ticker })
 		.then(stock => stock ? res.send(stock) : res.status(404).send())
 		.catch(err => res.status(500).send(err));
 }
@@ -45,4 +47,4 @@ export {
 	detail,
 	update,
 	remove
-}
+};

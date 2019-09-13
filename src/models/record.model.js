@@ -5,7 +5,7 @@ const recordSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Fund'
   },
-	stock: {
+  stock: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Stock'
   },

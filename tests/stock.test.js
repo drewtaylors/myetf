@@ -37,7 +37,7 @@ test('should add the correct stock', () => {
   return request(app)
     .post('/api/stocks')
     .send(newStock)
-    .then(res => Stock.findById(res.body._id))
+    .then(res => Stock.findOne({ _id: res.body._id }))
     .then(stock => expect(stock).toBeTruthy());
 });
 

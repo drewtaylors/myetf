@@ -29,7 +29,7 @@ test('should add the correct fund', () => {
 	return request(app)
 		.post('/api/funds')
 		.send(newFund)
-		.then(res => Fund.findById(res.body._id))
+		.then(res => Fund.findOne({ _id: res.body._id }))
 		.then(fund => expect(fund).toMatchObject(newFund));
 });
 

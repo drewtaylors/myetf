@@ -18,6 +18,7 @@ const detail = (req, res) => {
   Stock
     .findOne({ ticker: req.params.ticker })
     .then(stock => stock ? res.json(stock) : res.status(404).send())
+    .catch(err => res.status(500).send(err));
 }
 
 const update = (req, res) => {

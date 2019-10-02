@@ -111,5 +111,11 @@ export {
   stockTwo,
   stockOneId,
   stockTwoId,
+  recordOne,
+  recordTwo,
+  recordThree,
+  recordOneId,
+  recordTwoId,
+  recordThreeId,
   setupDatabase
 };

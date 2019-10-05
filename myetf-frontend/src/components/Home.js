@@ -9,6 +9,8 @@ import {
   Typography
 } from '@material-ui/core';
 
+import api from '../selectors/api';
+
 const useStyles = makeStyles(theme => ({
   button: {
     flexGrow: 1,
@@ -50,6 +52,11 @@ const Home = () => {
     e.preventDefault();
     setFund('');
     setStock('');
+    makeRequest();
+  };
+
+  const makeRequest = () => {
+    api.get('/api/funds').then(() => console.log('success')).catch(err => console.log(err));
   };
 
   return (

@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 import './db/mongoose';
 
@@ -9,6 +10,7 @@ import auditRouter from './routes/audit.routes';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use('/api/funds', fundRouter);
 app.use('/api/stocks', stockRouter);

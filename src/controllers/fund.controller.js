@@ -3,7 +3,9 @@ import Fund from '../models/fund.model';
 const list = (req, res) => {
   Fund
     .find()
-    .then(funds => res.json(funds))
+    .then(funds => {
+      console.log('hit');
+      res.json(funds)})
     .catch(err => res.status(500).json(err));
 };
 

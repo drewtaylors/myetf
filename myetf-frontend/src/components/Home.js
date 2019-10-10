@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     height: '80vh',
     margin: 'auto',
+    marginTop: theme.spacing(2),
     maxWidth: '1366px',
   },
   form: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   textField: {
+    backgroundColor: '#fff',
     flexGrow: 1,
     margin: theme.spacing(1),
   },

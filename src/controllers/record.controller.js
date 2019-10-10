@@ -1,28 +1,26 @@
 import Record from '../models/record.model';
 import {
-  findRecordByFundAndStock,
-  findRecordByFund,
-  findRecordByStock,
+  findRecordsByFundAndStock,
+  findRecordsByFund,
+  findRecordsByStock,
+  findRecords,
 } from '../utils/record.utils';
 
 const list = (req, res) => {
   if (req.query.fund && req.query.stock) {
-    findRecordByFundAndStock(req.query.fund, req.query.stock)
+    findRecordsByFundAndStock(req.query.fund, req.query.stock)
       .then(record => res.json(record))
       .catch(err => res.status(404).json(err));
   } else if (req.query.fund) {
-    findRecordByFund(req.query.fund)
+    findRecordsByFund(req.query.fund)
       .then(records => res.json(records))
       .catch(err => res.status(404).json(err));
   } else if (req.query.stock) {
-    findRecordByStock(req.query.stock)
+    findRecordsByStock(req.query.stock)
       .then(records => res.json(records))
       .catch(err => res.status(404).json(err));
   } else {
-    Record
-      .find()
-      .populate('fund')
-      .populate('stock')
+    findRecords()
       .then(records => res.json(records))
       .catch(err => res.status(500).json(err));
   }

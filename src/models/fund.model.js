@@ -8,7 +8,6 @@ const fundSchema = new mongoose.Schema({
 	},
 	name: {
 		type: String,
-		unique: true
 	}
 }, {
 	timestamps: true

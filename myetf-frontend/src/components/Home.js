@@ -9,6 +9,7 @@ import {
   Typography
 } from '@material-ui/core';
 
+import RecordDetails from './RecordDetails';
 import api from '../selectors/api';
 
 const useStyles = makeStyles(theme => ({
@@ -20,14 +21,17 @@ const useStyles = makeStyles(theme => ({
   container: {
     alignContent: 'center',
     justifyContent: 'center',
-    height: '100vh',
+    height: '80vh',
+    margin: 'auto',
+    maxWidth: '1366px',
   },
   form: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   item: {
-    textAlign: 'center'
+    minWidth: '100px',
+    textAlign: 'center',
   },
   root: {
     flexGrow: 1,
@@ -44,19 +48,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Home = () => {
+const Home = ({ history }) => {
   const classes = useStyles();
-  const [fund, setFund] = useState('');
-  const [stock, setStock] = useState('');
-  const searchRecords = (e) => {
-    e.preventDefault();
-    setFund('');
-    setStock('');
-    makeRequest();
-  };
+  const [fundTicker, setFundTicker] = useState('');
+  const [stockTicker, setStockTicker] = useState('');
+  const [records, setRecords] = useState([]);
+  const [showRecord, setShowRecord] = useState(false);
 
-  const makeRequest = () => {
-    api.get('/api/funds').then(() => console.log('success')).catch(err => console.log(err));
+  const search = (e) => {
+    e.preventDefault();
+    
+    api
+      .get(`/api/records?fund=${fundTicker}&stock=${stockTicker}`)
+      .then((res) => {
+        console.log(res);
+        setShowRecord(true);
+        setRecords(res.data);
+        history.push(`/record/${res.data[0]._id}`);
+      })
+      .catch(err => {
+        console.log(err);
+        setShowRecord(true);
+        setRecords([]);
+        history.push('/record/error');
+      });
   };
 
   return (
@@ -69,45 +84,53 @@ const Home = () => {
           <Grid container className={classes.form}>
             <Grid item xs={12} md={2} className={classes.item}>
               <TextField
-                id="outlined-fund-input"
-                label="Fund"
+                id="outlined-fund-ticker-input"
+                label="Fund Ticker"
                 className={classes.textField}
-                type="fund"
-                name="fund"
-                autoComplete="fund"
+                type="fundTicker"
+                name="fundTicker"
+                autoComplete="fundTicker"
                 margin="normal"
                 variant="outlined"
-                value={fund}
-                onChange={(e) => setFund(e.target.value)}
+                value={fundTicker}
+                onChange={(e) => setFundTicker(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={2} className={classes.item}>
               <TextField
-                id="outlined-stock-input"
-                label="Stock"
+                id="outlined-stock-ticker-input"
+                label="Stock Ticker"
                 className={classes.textField}
-                type="stock"
-                name="stock"
-                autoComplete="stock"
+                type="stockTicker"
+                name="stockTicker"
+                autoComplete="stockTicker"
                 margin="normal"
                 variant="outlined"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
+                value={stockTicker}
+                onChange={(e) => setStockTicker(e.target.value)}
               />
             </Grid>
-            <Grid item xs={1} className={classes.item}>
+            <Grid item xs={2} md={1} className={classes.item}>
               <Button
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                onClick={searchRecords}
+                onClick={search}
               >
                 Search
               </Button>
             </Grid>
           </Grid>
         </Grid>
-        
+        {
+          showRecord && 
+            records.map((record) => {
+              return (
+                <Grid item xs={12} className={classes.title} key={record._id}>
+                  <RecordDetails record={record} />
+                </Grid>
+            )})     
+        }
       </Grid>
     </div>
   );

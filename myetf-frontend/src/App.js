@@ -3,7 +3,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 
 import theme from './theme';
-import Routes from './components/Routes';
+import Routes from './routes/AppRouter';
 
 function App() {
   return (
